@@ -5,7 +5,7 @@ import json
 import webbrowser
 
 
-def get_url() -> str:
+def get_api_url() -> str:
     """Gets url from command line arguments if there is any
 
     Returns:
@@ -110,15 +110,21 @@ def format_coordinates_dms(lat: str, long: str) -> tuple:
     return (formatted_lat, formatted_long)
 
 
+def print_iss_coordinates(latitude: str, longitude: str, timestamp: str) -> None:
+    print(
+        f"ISS-Coordinates ({timestamp})\n"
+        f"Latitude:  {latitude}\n"
+        f"Longitude: {longitude}")
+
+
 def main():
-    url = get_url()
-    iss_data = get_iss_data(url)
+    api_url = get_api_url()
+    iss_data = get_iss_data(api_url)
     iss_lat, iss_long = get_iss_coordinates(iss_data)
     timestamp = datetime.fromtimestamp(float(iss_data["timestamp"]))
     formatted_lat, formatted_long = format_coordinates_dms(iss_lat, iss_long)
 
-    print(
-        f"ISS-Position ({timestamp})\nLatitude:  {formatted_lat}\nLongitude: {formatted_long}")
+    print_iss_coordinates(formatted_lat, formatted_long, timestamp)
     open_google_maps(iss_lat, iss_long)
 
 
