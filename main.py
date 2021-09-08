@@ -73,6 +73,7 @@ def format_coordinates_dms(lat: str, long: str) -> tuple:
         tuple: formatted latitude (DMS), formatted longitude (DMS)
     """
 
+    # TODO: Make this shit sexier
     # Degrees are the whole number in decimal degrees
     lat_degrees = lat.split(".")[0].strip("-")
     lat_decimals = float("0." + lat.split(".")[1])
