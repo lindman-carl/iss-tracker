@@ -30,6 +30,7 @@ def get_iss_data(url: str) -> json:
     """
 
     iss_json = requests.get(url)
+    print(type(iss_json))
     return iss_json.json()
 
 
@@ -55,9 +56,8 @@ def open_google_maps(lat: str, long: str, zoom: int = 2):
         long (str): Longitude position
         zoom (int): Zoom level 0-21, 2 is default
     """
+
     url = f"https://www.google.com/maps/place/{lat}+{long}/@{lat},{long},{zoom}z"
-    url3 = f"https://www.google.com/maps/search/?api=1&map_action=map&query={lat},{long}&zoom={zoom}&basemap=satelite"
-    url2 = f"https://www.google.com/maps/@?api=1&map_action=map&center={lat}%2C{long}&zoom={zoom}&basemap=terrain"
     webbrowser.open(url)
 
 
@@ -71,6 +71,7 @@ def format_coordinates(lat: str, long: str) -> tuple:
     Returns:
         tuple: formatted latitude, formatted longitude
     """
+
     lat_degrees = lat.split(".")[0].strip("-")
     lat_minutes = lat.split(".")[1][0:2]
     lat_seconds = lat.split(".")[1][2:]
@@ -100,10 +101,10 @@ def main():
     iss_data = get_iss_data(url)
     iss_lat, iss_long = get_iss_coordinates(iss_data)
     timestamp = datetime.fromtimestamp(float(iss_data["timestamp"]))
-    formatted_lat, formatted_long = format_coordinates(iss_lat, iss_long)
+    # formatted_lat, formatted_long = format_coordinates(iss_lat, iss_long)
 
     print(
-        f"ISS-Position ({timestamp})\nLatitude:  {formatted_lat}\nLongitude: {formatted_long}")
+        f"ISS-Position ({timestamp})\nLatitude:  {iss_lat}\nLongitude: {iss_long}")
     open_google_maps(iss_lat, iss_long)
 
 
