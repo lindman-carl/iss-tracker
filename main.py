@@ -1,8 +1,8 @@
-from sys import argv
-import requests
+from urllib import request
+from datetime import datetime
+import sys
 import json
 import webbrowser
-from datetime import datetime
 
 
 def get_url() -> str:
@@ -12,10 +12,10 @@ def get_url() -> str:
         str: url to iss-api
     """
 
-    if len(argv) > 0:
+    if len(sys.argv) > 0:
         url = "http://api.open-notify.org/iss-now.json"
     else:
-        url = argv[1]
+        url = sys.argv[1]
     return url
 
 
@@ -29,9 +29,10 @@ def get_iss_data(url: str) -> json:
         json: Containing timestamp, message, iss-coordinates
     """
 
-    iss_json = requests.get(url)
-    print(type(iss_json))
-    return iss_json.json()
+    # Gets API data and load json
+    iss_request = request.urlopen(url)
+    iss_json = json.load(iss_request)
+    return iss_json
 
 
 def get_iss_coordinates(data: json) -> tuple:
