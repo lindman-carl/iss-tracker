@@ -61,37 +61,49 @@ def open_google_maps(lat: str, long: str, zoom: int = 2):
     webbrowser.open(url)
 
 
-def format_coordinates(lat: str, long: str) -> tuple:
-    """This is an incorrect way of formatting coordinates
+def format_coordinates_dms(lat: str, long: str) -> tuple:
+    """Formats decimal degrees into DMS (Degrees, Minutes, Seconds)
 
     Args:
-        lat (str): latitude coordinates in ---- format
-        long (str): longitude coordinates in ---- format
+        lat (str): latitude coordinates in decimal degrees
+        long (str): longitude coordinates in decimal degrees
 
     Returns:
-        tuple: formatted latitude, formatted longitude
+        tuple: formatted latitude (DMS), formatted longitude (DMS)
     """
 
+    # Degrees are the whole number in decimal degrees
     lat_degrees = lat.split(".")[0].strip("-")
-    lat_minutes = lat.split(".")[1][0:2]
-    lat_seconds = lat.split(".")[1][2:]
+    lat_decimals = float("0." + lat.split(".")[1])
+    # Minutes are derived from multiplying the decimals of the degrees by 60
+    lat_minutes = str(lat_decimals * 60).split(".")
+    lat_decimals = float("0." + lat_minutes[1])
+    # Seconds are derived from multiplying the decimals of the minutes by 60
+    lat_seconds = str(lat_decimals * 60).split(".")[0]
 
+    # If the latitude decimal degree is negative then the coordinates are south of the ecuator
     if lat[0] == "-":
-        lat_ns = "N"
-    else:
         lat_ns = "S"
+    else:
+        lat_ns = "N"
 
+    # Degrees are the whole number in decimal degrees
     long_degrees = long.split(".")[0].strip("-")
-    long_minutes = long.split(".")[1][0:2]
-    long_seconds = long.split(".")[1][2:]
+    long_decimals = float("0." + long.split(".")[1])
+    # Minutes are derived from multiplying the decimals of the degrees by 60
+    long_minutes = str(long_decimals * 60).split(".")
+    long_decimals = float("0." + long_minutes[1])
+    # Seconds are derived from multiplying the decimals of the minutes by 60
+    long_seconds = str(long_decimals * 60).split(".")[0]
 
+    # If the longitude deciaml degree is negative the coordinates are west of the Greenwich prime meridian
     if long[0] == "-":
         long_ws = "W"
     else:
         long_ws = "E"
 
-    formatted_lat = f"{lat_degrees}\N{DEGREE SIGN}{lat_minutes}\'{lat_seconds}\" {lat_ns}"
-    formatted_long = f"{long_degrees}\N{DEGREE SIGN}{long_minutes}\'{long_seconds}\" {long_ws}"
+    formatted_lat = f"{lat_degrees}\N{DEGREE SIGN}{lat_minutes[0]}\'{lat_seconds}\" {lat_ns}"
+    formatted_long = f"{long_degrees}\N{DEGREE SIGN}{long_minutes[0]}\'{long_seconds}\" {long_ws}"
 
     return (formatted_lat, formatted_long)
 
@@ -101,10 +113,10 @@ def main():
     iss_data = get_iss_data(url)
     iss_lat, iss_long = get_iss_coordinates(iss_data)
     timestamp = datetime.fromtimestamp(float(iss_data["timestamp"]))
-    # formatted_lat, formatted_long = format_coordinates(iss_lat, iss_long)
+    formatted_lat, formatted_long = format_coordinates_dms(iss_lat, iss_long)
 
     print(
-        f"ISS-Position ({timestamp})\nLatitude:  {iss_lat}\nLongitude: {iss_long}")
+        f"ISS-Position ({timestamp})\nLatitude:  {formatted_lat}\nLongitude: {formatted_long}")
     open_google_maps(iss_lat, iss_long)
 
 
